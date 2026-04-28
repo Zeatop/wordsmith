@@ -1,23 +1,21 @@
 services:
   web:
-    build: ./web
+    image: lezed/wordsmith:web
     ports:
       - "8080:80"
+    volumes:
+      - ./web/static:/app/static
     depends_on:
       - words
 
   words:
-    build: ./words
-    expose:
-      - "8080"
+    image: lezed/wordsmith:words
     depends_on:
       db:
         condition: service_healthy
 
   db:
-    build: ./db
-    expose:
-      - "5432"
+    image: lezed/wordsmith:db
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
