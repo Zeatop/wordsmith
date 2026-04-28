@@ -30,13 +30,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push all images
+      - name: Build and push multi-arch images
         run: |
           REPO="${{ secrets.DOCKERHUB_USERNAME }}/wordsmith"
-          docker build -t "$REPO:${{ matrix.image.name }}" \
+          docker buildx build --platform linux/amd64,linux/arm64 \
+            -t "$REPO:${{ matrix.image.name }}" \
             -t "$REPO:${{ matrix.image.name }}-pr-${{ github.event.pull_request.number }}" \
             -t "$REPO:${{ matrix.image.name }}-${{ github.sha }}" \
-            ${{ matrix.image.context }}
-          docker push "$REPO:${{ matrix.image.name }}"
-          docker push "$REPO:${{ matrix.image.name }}-pr-${{ github.event.pull_request.number }}"
-          docker push "$REPO:${{ matrix.image.name }}-${{ github.sha }}"
+            ${{ matrix.image.context }} \
+            --push
