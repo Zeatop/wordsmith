@@ -8,6 +8,15 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image:
+          - name: web
+            context: ./web
+          - name: words
+            context: ./words
+          - name: db
+            context: ./db
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -24,9 +33,10 @@ jobs:
       - name: Build and push all images
         run: |
           REPO="${{ secrets.DOCKERHUB_USERNAME }}/wordsmith"
-          for img in web words db; do
-            docker build -t "$REPO:$img" -t "$REPO:$img-pr-${{ github.event.pull_request.number }}" -t "$REPO:$img-${{ github.sha }}" $img
-            docker push "$REPO:$img"
-            docker push "$REPO:$img-pr-${{ github.event.pull_request.number }}"
-            docker push "$REPO:$img-${{ github.sha }}"
-          done
+          docker build -t "$REPO:${{ matrix.image.name }}" \
+            -t "$REPO:${{ matrix.image.name }}-pr-${{ github.event.pull_request.number }}" \
+            -t "$REPO:${{ matrix.image.name }}-${{ github.sha }}" \
+            ${{ matrix.image.context }}
+          docker push "$REPO:${{ matrix.image.name }}"
+          docker push "$REPO:${{ matrix.image.name }}-pr-${{ github.event.pull_request.number }}"
+          docker push "$REPO:${{ matrix.image.name }}-${{ github.sha }}"
