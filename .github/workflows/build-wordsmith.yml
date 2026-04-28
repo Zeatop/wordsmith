@@ -1,9 +1,9 @@
 name: Build Wordsmith Images
 
 on:
-  pull_request:
-    types:
-      - labeled
+  push:
+    branches:
+      - main
 
 env:
   DOCKERHUB_REPOSITORY: ${{ vars.DOCKERHUB_REPOSITORY != '' && vars.DOCKERHUB_REPOSITORY || format('{0}/wordsmith', secrets.DOCKERHUB_USERNAME) }}
