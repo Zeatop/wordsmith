@@ -12,11 +12,11 @@ jobs:
       matrix:
         image:
           - name: web
-            context: ./web
+            context: ./wordsmith/web
           - name: words
-            context: ./words
+            context: ./wordsmith/words
           - name: db
-            context: ./db
+            context: ./wordsmith/db
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
