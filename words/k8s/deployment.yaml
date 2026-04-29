@@ -29,6 +29,7 @@ spec:
   type: NodePort
   selector:
     app: words
+    namespace: wordsmith
   ports:
     - port: 8080
       targetPort: 8080
